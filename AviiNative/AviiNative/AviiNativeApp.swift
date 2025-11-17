@@ -9,10 +9,19 @@ import SwiftUI
 
 @main
 struct AviiNativeApp: App {
+    @StateObject private var profileStore = ProfileStore()
+
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .preferredColorScheme(.dark)
+            Group {
+                if profileStore.hasProfile {
+                    RootView()
+                } else {
+                    OnboardingView()
+                }
+            }
+            .environmentObject(profileStore)
+            .preferredColorScheme(.dark)
         }
     }
 }

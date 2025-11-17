@@ -46,5 +46,6 @@ struct PlaceholderView: View {
 
 #Preview {
     RootView()
+        .environmentObject(ProfileStore.preview)
         .preferredColorScheme(.dark)
 }

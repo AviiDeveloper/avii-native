@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct DashboardView: View {
+    @EnvironmentObject var profileStore: ProfileStore
+
+    private var firstName: String {
+        profileStore.profile?.firstName ?? "there"
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -17,7 +23,7 @@ struct DashboardView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Welcome back, Avii")
+            Text("Welcome back, \(firstName)")
                 .font(.title.bold())
             Text("Your recovery looks strong. Keep the LiDAR scans coming for more precise coaching.")
                 .font(.subheadline)
@@ -66,5 +72,6 @@ struct DashboardView: View {
 
 #Preview {
     DashboardView()
+        .environmentObject(ProfileStore.preview)
         .preferredColorScheme(.dark)
 }
