@@ -11,7 +11,8 @@ import SwiftUI
 struct AviiNativeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .preferredColorScheme(.dark)
         }
     }
 }
