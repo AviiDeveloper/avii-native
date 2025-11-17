@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 struct Profile: Codable, Identifiable, Equatable {
     let id: UUID
