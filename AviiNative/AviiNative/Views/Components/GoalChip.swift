@@ -11,7 +11,15 @@ struct GoalChip: View {
                 .font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(isSelected ? AviiTheme.accentGradient : Color.white.opacity(0.08))
+                .background(
+                    Group {
+                        if isSelected {
+                            AviiTheme.accentGradient
+                        } else {
+                            Color.white.opacity(0.08)
+                        }
+                    }
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 999)
                         .stroke(isSelected ? Color.clear : AviiTheme.border, lineWidth: 1)
