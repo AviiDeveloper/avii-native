@@ -4,6 +4,7 @@ import Combine
 struct OnboardingView: View {
     @EnvironmentObject var profileStore: ProfileStore
     @StateObject private var viewModel = OnboardingViewModel()
+    @AppStorage("avii.hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some View {
         ZStack {
@@ -122,7 +123,7 @@ struct OnboardingView: View {
             } else {
                 Button("Skip for now") {
                     let guest = Profile(firstName: "Guest", email: "", height: 0, weight: 0, goals: [])
-                    profileStore.update(with: guest)
+                    complete(with: guest)
                 }
                 .foregroundStyle(Color.white.opacity(0.8))
             }
@@ -137,8 +138,13 @@ struct OnboardingView: View {
             viewModel.advance()
         case .goals:
             guard let profile = viewModel.buildProfile() else { return }
-            profileStore.update(with: profile)
+            complete(with: profile)
         }
+    }
+
+    private func complete(with profile: Profile) {
+        profileStore.update(with: profile)
+        hasCompletedOnboarding = true
     }
 }
 

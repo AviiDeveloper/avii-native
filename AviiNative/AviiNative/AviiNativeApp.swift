@@ -10,11 +10,12 @@ import SwiftUI
 @main
 struct AviiNativeApp: App {
     @StateObject private var profileStore = ProfileStore()
+    @AppStorage("avii.hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if profileStore.hasProfile {
+                if hasCompletedOnboarding && profileStore.hasProfile {
                     RootView()
                 } else {
                     OnboardingView()
