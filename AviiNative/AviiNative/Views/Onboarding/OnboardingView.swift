@@ -71,14 +71,14 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 18) {
                 Text("What should Avii focus on first?")
                     .font(.headline)
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
-                    ForEach(viewModel.availableGoals, id: \.self) { goal in
-                        GoalChip(label: goal, isSelected: viewModel.selectedGoals.contains(goal)) {
-                            viewModel.toggle(goal)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                    ForEach(viewModel.availableGoals) { option in
+                        GoalSelectionCard(option: option, isSelected: viewModel.selectedGoals.contains(option.title)) {
+                            viewModel.toggle(option.title)
                         }
                     }
                 }
-                Text("Select up to three focus areas.")
+                Text("You can pick up to three. Goals guide LiDAR prompts and coaching.")
                     .font(.footnote)
                     .foregroundStyle(AviiTheme.mutedText)
             }
@@ -166,6 +166,13 @@ private enum OnboardingStep: Int, CaseIterable {
     }
 }
 
+private struct GoalOption: Identifiable, Hashable {
+    let id = UUID()
+    let title: String
+    let subtitle: String
+    let icon: String
+}
+
 private final class OnboardingViewModel: ObservableObject {
     @Published var step: OnboardingStep = .welcome
     @Published var firstName: String = ""
@@ -174,7 +181,14 @@ private final class OnboardingViewModel: ObservableObject {
     @Published var weight: String = ""
     @Published var selectedGoals: Set<String> = []
 
-    let availableGoals = ["Mobility", "Recovery", "Strength", "Energy", "Metabolic", "Injury prevention"]
+    let availableGoals: [GoalOption] = [
+        .init(title: "Mobility", subtitle: "Range + joints", icon: "figure.yoga"),
+        .init(title: "Recovery", subtitle: "Sleep + HRV", icon: "bed.double"),
+        .init(title: "Strength", subtitle: "Progressive load", icon: "dumbbell"),
+        .init(title: "Energy", subtitle: "Metabolic health", icon: "bolt"),
+        .init(title: "Metabolic", subtitle: "Body comp + fuel", icon: "flame"),
+        .init(title: "Injury prevention", subtitle: "Stability + prehab", icon: "bandage"),
+    ]
 
     func advance() {
         if let next = OnboardingStep(rawValue: step.rawValue + 1) {
@@ -216,6 +230,41 @@ private final class OnboardingViewModel: ObservableObject {
             weight: weightValue,
             goals: Array(selectedGoals)
         )
+    }
+}
+
+private struct GoalSelectionCard: View {
+    let option: GoalOption
+    let isSelected: Bool
+    let tap: () -> Void
+
+    var body: some View {
+        Button(action: tap) {
+            VStack(alignment: .leading, spacing: 8) {
+                Image(systemName: option.icon)
+                    .font(.title3)
+                    .padding(10)
+                    .background(Color.white.opacity(0.12))
+                    .clipShape(Circle())
+                Text(option.title)
+                    .font(.headline)
+                Text(option.subtitle)
+                    .font(.footnote)
+                    .foregroundStyle(AviiTheme.mutedText)
+            }
+            .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white.opacity(isSelected ? 0.14 : 0.05))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(isSelected ? Color.white.opacity(0.45) : AviiTheme.border, lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.white)
     }
 }
 
